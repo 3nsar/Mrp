@@ -1,8 +1,9 @@
 ﻿using Mrp.Repositories;
+using Mrp.Services;
 using Npgsql;
 
-MediaRepository mediaRepository = new MediaRepository();
-var mediaList = mediaRepository.GetAllMedia();
+MediaService mediaService = new MediaService(new MediaRepository());
+var mediaList = mediaService.GetAllMedia();
 foreach (var media in mediaList)
 {
     Console.WriteLine($"ID: {media.ID}");
