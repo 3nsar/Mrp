@@ -25,5 +25,17 @@ namespace Mrp.Controllers
             string json = JsonSerializer.Serialize(mediaList, options);
             return json;
         }
-      }
+
+
+        public string GetMediaByIdJson(Guid id)
+        {
+            var mediaList = mediaService.GetMediaById(id);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            string json = JsonSerializer.Serialize(mediaList, options);
+            return json;
+        }
+    }
     }

@@ -18,5 +18,10 @@ namespace Mrp.Services
         {
             return MediaRepository.GetAllMedia();
         }
+
+        public List<MediaModel> GetMediaById(Guid id)
+        {
+            return MediaRepository.GetMediaById(id);
+        }
       }
     }

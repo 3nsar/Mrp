@@ -24,6 +24,21 @@ while (true)
         context.Response.ContentLength64 = buffer.Length;
         context.Response.ContentType = "application/json";
         context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+    }else if(context.Request.Url.AbsolutePath.StartsWith("/media/") && context.Request.HttpMethod == "GET")
+    {
+        string idString = context.Request.Url.AbsolutePath.Substring("/media/".Length);
+        if (Guid.TryParse(idString, out Guid id))
+        {
+            string json = mediaController.GetMediaByIdJson(id);
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(json);
+            context.Response.ContentLength64 = buffer.Length;
+            context.Response.ContentType = "application/json";
+            context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+        }
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        }
     }
     else
     {
