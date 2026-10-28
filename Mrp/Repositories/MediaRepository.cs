@@ -77,5 +77,66 @@ namespace Mrp.Repositories
             }
             return mediaList;
         }
+
+        public void AddMedia(MediaModel media)
+        {
+            string connectionString = "Host=localhost;Port=5432;Database=ensar;Username=postgres;Password=ensar";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO media ( title, description, media_type, release_year, genre, age_restriction) " +
+                    "VALUES ( @title, @description, @media_type, @release_year, @genre, @age_restriction)";
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    //command.Parameters.AddWithValue("id", media.ID);
+                    command.Parameters.AddWithValue("title", media.Title);
+                    command.Parameters.AddWithValue("description", media.Description);
+                    command.Parameters.AddWithValue("media_type", media.MediaType);
+                    command.Parameters.AddWithValue("release_year", media.ReleaseYear);
+                    command.Parameters.AddWithValue("genre", media.Genre);
+                    command.Parameters.AddWithValue("age_restriction", media.AgeRestriction);
+                    //command.Parameters.AddWithValue("average_score", media.AverageScore);
+                    // command.Parameters.AddWithValue("favorite_count", media.FavoriteCount);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateMediaById(Guid id, MediaModel media)
+        {
+            string connectionString = "Host=localhost;Port=5432;Database=ensar;Username=postgres;Password=ensar";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE media SET title = @title, description = @description, " +
+                    "media_type = @media_type, release_year = @release_year, genre = @genre, age_restriction = @age_restriction WHERE id = @id";
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("id", id);
+                    command.Parameters.AddWithValue("title", media.Title);
+                    command.Parameters.AddWithValue("description", media.Description);
+                    command.Parameters.AddWithValue("media_type", media.MediaType);
+                    command.Parameters.AddWithValue("release_year", media.ReleaseYear);
+                    command.Parameters.AddWithValue("genre", media.Genre);
+                    command.Parameters.AddWithValue("age_restriction", media.AgeRestriction);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteMediaById(Guid id)
+        {
+            string connectionString = "Host=localhost;Port=5432;Database=ensar;Username=postgres;Password=ensar";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "DELETE FROM media WHERE id = @id";
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("id", id);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

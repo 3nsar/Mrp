@@ -1,4 +1,5 @@
-﻿using Mrp.Services;
+﻿using Mrp.Models;
+using Mrp.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,5 +38,21 @@ namespace Mrp.Controllers
             string json = JsonSerializer.Serialize(mediaList, options);
             return json;
         }
+
+        public void AddMedia(MediaModel media)
+        {
+            mediaService.AddMedia(media);
+        }
+
+        public void UpdateMediaById(Guid id, MediaModel media)
+        {
+            mediaService.UpdateMediaById(id, media);
+        }
+
+        public void DeleteMediaById(Guid id)
+        {
+            mediaService.DeleteMediaById(id);
+        }
+
     }
-    }
+}

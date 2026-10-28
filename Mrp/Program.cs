@@ -1,8 +1,10 @@
-﻿using Mrp.Repositories;
+﻿using Mrp.Controllers;
+using Mrp.Models;
+using Mrp.Repositories;
 using Mrp.Services;
-using Mrp.Controllers;
 using Npgsql;
 using System.Net;
+using System.Text.Json;
 
 MediaController mediaController = new MediaController(new MediaService(new MediaRepository()));
 
@@ -15,7 +17,7 @@ Console.WriteLine("Listening on port 8002");
 while (true)
 {
     HttpListenerContext context = listener.GetContext();
-    using HttpListenerResponse res = context.Response;
+    using HttpListenerResponse resp = context.Response;
 
     if(context.Request.Url.AbsolutePath == "/media" && context.Request.HttpMethod == "GET" )
     {
@@ -38,6 +40,47 @@ while (true)
         else
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        }
+    }
+    else if (context.Request.Url.AbsolutePath == "/media" && context.Request.HttpMethod == "POST")
+    {
+        using (var reader = new System.IO.StreamReader(context.Request.InputStream))
+        {
+            string requestBody = reader.ReadToEnd();
+            MediaModel media = JsonSerializer.Deserialize<MediaModel>(requestBody);
+            mediaController.AddMedia(media);
+            context.Response.StatusCode = (int)HttpStatusCode.Created;
+        }
+    }
+    else if (context.Request.Url.AbsolutePath.StartsWith("/media/") && context.Request.HttpMethod == "PUT")
+    {
+        string idString = context.Request.Url.AbsolutePath.Substring("/media/".Length);
+        if (Guid.TryParse(idString, out Guid id))
+        {
+            using (var reader = new System.IO.StreamReader(context.Request.InputStream))
+            {
+                string requestBody = reader.ReadToEnd();
+                MediaModel media = JsonSerializer.Deserialize<MediaModel>(requestBody);
+                mediaController.UpdateMediaById(id, media);
+                resp.StatusCode = (int)HttpStatusCode.OK;
+            }
+        }
+        else
+        {
+            resp.StatusCode = (int)HttpStatusCode.BadRequest;
+        }
+    }
+    else if (context.Request.Url.AbsolutePath.StartsWith("/media/") && context.Request.HttpMethod == "DELETE")
+    {
+        string idString = context.Request.Url.AbsolutePath.Substring("/media/".Length);
+        if (Guid.TryParse(idString, out Guid id))
+        {
+            mediaController.DeleteMediaById(id);
+            resp.StatusCode = (int)HttpStatusCode.OK;
+        }
+        else
+        {
+            resp.StatusCode = (int)HttpStatusCode.BadRequest;
         }
     }
     else
