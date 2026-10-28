@@ -1,22 +1,18 @@
-﻿using Npgsql;
+﻿using Mrp.Repositories;
+using Npgsql;
 
-//create env file 
-string connectionString = 
-using var connection = new NpgsqlConnection(connectionString);
-
-try
+MediaRepository mediaRepository = new MediaRepository();
+var mediaList = mediaRepository.GetAllMedia();
+foreach (var media in mediaList)
 {
-    connection.Open();
-    string query = "SELECT * FROM test";
-    using var command = new NpgsqlCommand(query, connection);
-    using var reader = command.ExecuteReader();
-    while (reader.Read())
-    {
-        Console.WriteLine($"name: {reader["name"]}, age: {reader["age"]}");
-    }
+    Console.WriteLine($"ID: {media.ID}");
+    Console.WriteLine($"Title: {media.Title}");
+    Console.WriteLine($"Description: {media.Description}");
+    Console.WriteLine($"Media Type: {media.MediaType}");
+    Console.WriteLine($"Release Year: {media.ReleaseYear}");
+    Console.WriteLine($"Genre: {media.Genre}");
+    Console.WriteLine($"Age Restriction: {media.AgeRestriction}");
+    Console.WriteLine($"Average Score: {media.AverageScore}");
+    Console.WriteLine($"Favorite Count: {media.FavoriteCount}");
+    Console.WriteLine();
 }
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred while opening the connection: {ex.Message}");
-}
-
