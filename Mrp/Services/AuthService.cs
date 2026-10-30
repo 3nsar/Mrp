@@ -1,8 +1,5 @@
 ﻿using Mrp.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Mrp.Services
 {
@@ -39,10 +36,10 @@ namespace Mrp.Services
             if (user == null) return null;
 
             byte[] salt = Convert.FromBase64String(user.Salt);
-            byte[] expected = Convert.FromBase64String(user.PasswordHash);
             byte[] actual = Convert.FromBase64String(HashPassword(password, salt));
+            byte[] expected = Convert.FromBase64String(user.PasswordHash);
 
-            if (!CryptographicOperations.FixedTimeEquals(expected, actual))
+            if (!expected.SequenceEqual(actual))
                 return null;
 
             string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));

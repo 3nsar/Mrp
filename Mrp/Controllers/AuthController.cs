@@ -1,8 +1,5 @@
 ﻿using Mrp.Models;
 using Mrp.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace Mrp.Controllers
@@ -21,5 +18,19 @@ namespace Mrp.Controllers
             return authService.Register(request.Username, request.Password);
         }
 
+        public string? Login(AuthRequest request)
+        {
+            string? token = authService.Login(request.Username, request.Password);
+            if (token == null) return null;
+            return JsonSerializer.Serialize(new { token });
+        }
+
+        public bool IsAuthorized(string? authHeader)
+        {
+            if (authHeader == null || !authHeader.StartsWith("Bearer "))
+                return false;
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+            return authService.ValidateToken(token);
+        }
     }
 }
